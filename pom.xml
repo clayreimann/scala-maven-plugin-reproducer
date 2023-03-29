@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>scala-maven-plugin-reproducer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <scala.maven-plugin.version>4.8.1</scala.maven-plugin.version>
+        <java-exports>
+            --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --add-exports
+            java.base/jdk.internal.ref=ALL-UNNAMED
+        </java-exports>
+        <java-short.version>11</java-short.version>
+        <maven.compiler.source>${java-short.version}</maven.compiler.source>
+        <maven.compiler.release>${java-short.version}</maven.compiler.release>
+        <maven.compiler.target>${java-short.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java-short.version}</maven.compiler.compilerVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <compiler.maven-plugin.version>3.11.0</compiler.maven-plugin.version>
+        <deploy.maven-plugin.version>2.8.2</deploy.maven-plugin.version>
+        <surefire.maven-plugin.version>2.22.2</surefire.maven-plugin.version>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.10</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.maven-plugin.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${deploy.maven-plugin.version}</version>
+                <configuration>
+                    <skip>${artifact.skip-deploy}</skip>
+                    <retryFailedDeploymentCount>2</retryFailedDeploymentCount>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala.maven-plugin.version}</version>
+                <configuration>
+                    <!--                        <fork>true</fork>-->
+                    <jvmArgs>
+                        <jvmArg>-Djava.net.preferIPv4Stack=true</jvmArg>
+                        <jvmArg>${java-exports}</jvmArg>
+                    </jvmArgs>
+                    <javacArgs>
+                        <javacArg>-release ${java-short.version}</javacArg>
+                    </javacArgs>
+                    <args>
+                        <arg>-deprecation</arg>
+                        <arg>-unchecked</arg>
+                        <arg>-feature</arg>
+                        <arg>-release:${java-short.version}</arg>
+                    </args>
+                    <displayCmd>true</displayCmd>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>compile-scala</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+
+            </plugin>
+        </plugins>
+    </build>
+</project>
